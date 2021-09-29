@@ -11,9 +11,9 @@ cur = conexion.cursor()
 def hello_world():
     print("inicio conexion")
     
-    cur.execute( "SELECT * FROM prueba" )
-    for nombre_fefa, edad_fjasdfa in cur.fetchall() :
-        print(nombre_fefa, edad_fjasdfa)
+    cur.execute( "SELECT * FROM prueba_incremento" )
+    for id_fas ,nombre_fefa, edad_fjasdfa  in cur.fetchall() :
+        print(id_fas,nombre_fefa, edad_fjasdfa)
 
     return {"step": "mostrar"}
 
@@ -21,11 +21,22 @@ def hello_world():
 def insertar():
     print("inicio conexion")
     
-    cur.execute("INSERT INTO prueba (nombre,edad) VALUES('adriana',40)")
+    cur.execute("INSERT INTO prueba_incremento (nombre,edad) VALUES('adriana',40)")
 
     conexion.commit() # <- We MUST commit to reflect the inserted data
     return {"step": "insertar"}
 
+@app.route("/carga_masiva")
+def carga_masiva():
+    print("inicio conexion")
+    file = "/home/rau/BlockbusterData.csv"
+    with open(file, 'r',encoding="latin-1") as f:
+        next(f) # Skip the header row.
+        #f , <database name>, Comma-Seperated
+        cur.copy_from(f, 'temporal', sep=';')
+        #Commit Changes
+        conexion.commit() # <- We MUST commit to reflect the inserted data
+    return {"step": "carga_masiva"}
 
 @app.route("/carga")
 def carga():
