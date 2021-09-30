@@ -12,7 +12,7 @@
  Target Server Version : 120008
  File Encoding         : 65001
 
- Date: 29/09/2021 16:24:47
+ Date: 29/09/2021 21:06:18
 */
 
 
@@ -138,22 +138,11 @@ START 1
 CACHE 1;
 
 -- ----------------------------
--- Sequence structure for prueba_incremento_id
--- ----------------------------
-DROP SEQUENCE IF EXISTS "prueba_incremento_id";
-CREATE SEQUENCE "prueba_incremento_id" 
-INCREMENT 1
-MINVALUE  1
-MAXVALUE 9223372036854775807
-START 1
-CACHE 1;
-
--- ----------------------------
 -- Table structure for actor
 -- ----------------------------
 DROP TABLE IF EXISTS "actor";
 CREATE TABLE "actor" (
-  "id_actor" int2 NOT NULL DEFAULT nextval('id_actor'::regclass),
+  "id_actor" int8 NOT NULL DEFAULT nextval('id_actor'::regclass),
   "nombre" varchar(255) COLLATE "pg_catalog"."default",
   "apellido" varchar(255) COLLATE "pg_catalog"."default"
 )
@@ -170,7 +159,7 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS "categoria";
 CREATE TABLE "categoria" (
-  "id_categoria" int2 NOT NULL DEFAULT nextval('id_categoria'::regclass),
+  "id_categoria" int8 NOT NULL DEFAULT nextval('id_categoria'::regclass),
   "categoria" varchar(255) COLLATE "pg_catalog"."default"
 )
 ;
@@ -186,9 +175,9 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS "ciudad";
 CREATE TABLE "ciudad" (
-  "id_cuidad" int2 NOT NULL DEFAULT nextval('id_ciudad'::regclass),
-  "id_pais" int2 NOT NULL,
-  "codigo_postal" int2,
+  "id_ciudad" int8 NOT NULL DEFAULT nextval('id_ciudad'::regclass),
+  "id_pais" int8 NOT NULL,
+  "codigo_postal" int8,
   "nombre" varchar(255) COLLATE "pg_catalog"."default"
 )
 ;
@@ -204,13 +193,13 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS "cliente";
 CREATE TABLE "cliente" (
-  "id_cliente" int2 NOT NULL DEFAULT nextval('id_cliente'::regclass),
+  "id_cliente" int8 NOT NULL DEFAULT nextval('id_cliente'::regclass),
   "nombre" varchar(255) COLLATE "pg_catalog"."default",
   "apellido" varchar(255) COLLATE "pg_catalog"."default",
   "correo" varchar(255) COLLATE "pg_catalog"."default",
   "status" varchar(255) COLLATE "pg_catalog"."default",
   "fecha_registro" date,
-  "id_tienda" int2 NOT NULL
+  "id_tienda" int8 NOT NULL
 )
 ;
 
@@ -225,8 +214,8 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS "cliente_direccion";
 CREATE TABLE "cliente_direccion" (
-  "id_cliente" int2 NOT NULL,
-  "id_direccion" int2 NOT NULL
+  "id_cliente" int8 NOT NULL,
+  "id_direccion" int8 NOT NULL
 )
 ;
 
@@ -241,8 +230,8 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS "direccion";
 CREATE TABLE "direccion" (
-  "id_direccion" int2 NOT NULL DEFAULT nextval('id_direccion'::regclass),
-  "id_ciudad" int2 NOT NULL,
+  "id_direccion" int8 NOT NULL DEFAULT nextval('id_direccion'::regclass),
+  "id_ciudad" int8 NOT NULL,
   "direccion" varchar(255) COLLATE "pg_catalog"."default"
 )
 ;
@@ -258,12 +247,12 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS "empleado";
 CREATE TABLE "empleado" (
-  "id_empleado" int2 NOT NULL DEFAULT nextval('id_empleado'::regclass),
+  "id_empleado" int8 NOT NULL DEFAULT nextval('id_empleado'::regclass),
   "nombre" varchar(255) COLLATE "pg_catalog"."default",
   "apellido" varchar(255) COLLATE "pg_catalog"."default",
   "correo" varchar(255) COLLATE "pg_catalog"."default",
   "status" varchar(255) COLLATE "pg_catalog"."default",
-  "id_tienda" int2 NOT NULL,
+  "id_tienda" int8 NOT NULL,
   "user" varchar(255) COLLATE "pg_catalog"."default",
   "pass" varchar(255) COLLATE "pg_catalog"."default",
   "encargado" varchar(255) COLLATE "pg_catalog"."default"
@@ -281,8 +270,8 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS "empleado_direccion";
 CREATE TABLE "empleado_direccion" (
-  "id_empleado" int2 NOT NULL,
-  "id_direccion" int2 NOT NULL
+  "id_empleado" int8 NOT NULL,
+  "id_direccion" int8 NOT NULL
 )
 ;
 
@@ -297,8 +286,8 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS "idioma";
 CREATE TABLE "idioma" (
-  "id_idioma" int2 NOT NULL DEFAULT nextval('id_idioma'::regclass),
-  "idioma" varchar(255) COLLATE "pg_catalog"."default"
+  "id_idioma" int8 NOT NULL DEFAULT nextval('id_idioma'::regclass),
+  "nombre_idioma" varchar(255) COLLATE "pg_catalog"."default"
 )
 ;
 
@@ -313,7 +302,7 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS "pais";
 CREATE TABLE "pais" (
-  "id_pais" int2 NOT NULL DEFAULT nextval('id_pais'::regclass),
+  "id_pais" int8 NOT NULL DEFAULT nextval('id_pais'::regclass),
   "nombre" varchar(255) COLLATE "pg_catalog"."default"
 )
 ;
@@ -329,13 +318,13 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS "pelicula";
 CREATE TABLE "pelicula" (
-  "id_pelicula" int2 NOT NULL DEFAULT nextval('id_pelicula'::regclass),
+  "id_pelicula" int8 NOT NULL DEFAULT nextval('id_pelicula'::regclass),
   "nombre" varchar(255) COLLATE "pg_catalog"."default",
   "descripcion" varchar(255) COLLATE "pg_catalog"."default",
-  "year_lanzamiento" int2,
-  "dias_renta" int2,
+  "year_lanzamiento" int8,
+  "dias_renta" int8,
   "costo" float4,
-  "duracion" int2,
+  "duracion" int8,
   "costo_mal_estado" float4,
   "clasificacion" varchar(255) COLLATE "pg_catalog"."default"
 )
@@ -352,8 +341,8 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS "pelicula_actor";
 CREATE TABLE "pelicula_actor" (
-  "id_pelicula" int2 NOT NULL,
-  "id_actor" int2 NOT NULL
+  "id_pelicula" int8 NOT NULL,
+  "id_actor" int8 NOT NULL
 )
 ;
 
@@ -368,8 +357,8 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS "pelicula_categoria";
 CREATE TABLE "pelicula_categoria" (
-  "id_pelicula" int2 NOT NULL,
-  "id_categoria" int2 NOT NULL
+  "id_pelicula" int8 NOT NULL,
+  "id_categoria" int8 NOT NULL
 )
 ;
 
@@ -384,8 +373,8 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS "pelicula_idioma";
 CREATE TABLE "pelicula_idioma" (
-  "id_pelicula" int2 NOT NULL,
-  "id_idioma" int2 NOT NULL
+  "id_pelicula" int8 NOT NULL,
+  "id_idioma" int8 NOT NULL
 )
 ;
 
@@ -396,41 +385,19 @@ BEGIN;
 COMMIT;
 
 -- ----------------------------
--- Table structure for prueba_incremento
--- ----------------------------
-DROP TABLE IF EXISTS "prueba_incremento";
-CREATE TABLE "prueba_incremento" (
-  "id" int8 NOT NULL DEFAULT nextval('prueba_incremento_id'::regclass),
-  "nombre" varchar(20) COLLATE "pg_catalog"."default" NOT NULL,
-  "edad" int8 NOT NULL
-)
-;
-
--- ----------------------------
--- Records of prueba_incremento
--- ----------------------------
-BEGIN;
-INSERT INTO "prueba_incremento" VALUES (0, 'raul', 1);
-INSERT INTO "prueba_incremento" VALUES (1, 'adriana', 40);
-INSERT INTO "prueba_incremento" VALUES (2, 'adriana', 40);
-INSERT INTO "prueba_incremento" VALUES (3, 'adriana', 40);
-INSERT INTO "prueba_incremento" VALUES (4, 'adriana', 40);
-COMMIT;
-
--- ----------------------------
 -- Table structure for rentado
 -- ----------------------------
 DROP TABLE IF EXISTS "rentado";
 CREATE TABLE "rentado" (
-  "id_rentado" int2 NOT NULL DEFAULT nextval('id_rentado'::regclass),
+  "id_rentado" int8 NOT NULL DEFAULT nextval('id_rentado'::regclass),
   "fecha_renta" timestamp(6),
   "fecha_regreso" timestamp(6),
   "total" float4,
   "fecha_pago" timestamp(6),
-  "id_cliente" int2 NOT NULL,
-  "id_tienda" int2 NOT NULL,
-  "id_empleado" int2 NOT NULL,
-  "id_pelicula" int2 NOT NULL
+  "id_cliente" int8 NOT NULL,
+  "id_tienda" int8 NOT NULL,
+  "id_empleado" int8 NOT NULL,
+  "id_pelicula" int8 NOT NULL
 )
 ;
 
@@ -441,68 +408,13 @@ BEGIN;
 COMMIT;
 
 -- ----------------------------
--- Table structure for temporal
--- ----------------------------
-DROP TABLE IF EXISTS "temporal";
-CREATE TABLE "temporal" (
-  "nombre_cliente" varchar(255) COLLATE "pg_catalog"."default",
-  "correo_cliente" varchar(255) COLLATE "pg_catalog"."default",
-  "cliente_activo" varchar(255) COLLATE "pg_catalog"."default",
-  "fecha_creacion" varchar(255) COLLATE "pg_catalog"."default",
-  "tienda_preferida" varchar(255) COLLATE "pg_catalog"."default",
-  "direccion_cliente" varchar(255) COLLATE "pg_catalog"."default",
-  "codigo_postal_cliente" varchar(255) COLLATE "pg_catalog"."default",
-  "ciudad_cliente" varchar(255) COLLATE "pg_catalog"."default",
-  "pais_cliente" varchar(255) COLLATE "pg_catalog"."default",
-  "fecha_renta" varchar(255) COLLATE "pg_catalog"."default",
-  "fecha_retorno" varchar(255) COLLATE "pg_catalog"."default",
-  "monto_a_pagar" varchar(255) COLLATE "pg_catalog"."default",
-  "fecha_pago" varchar(255) COLLATE "pg_catalog"."default",
-  "nombre_empleado" varchar(255) COLLATE "pg_catalog"."default",
-  "correo_empleado" varchar(255) COLLATE "pg_catalog"."default",
-  "empleado_activo" varchar(255) COLLATE "pg_catalog"."default",
-  "tienda_empleado" varchar(255) COLLATE "pg_catalog"."default",
-  "usuario_empleado" varchar(255) COLLATE "pg_catalog"."default",
-  "contrasena_empleado" varchar(255) COLLATE "pg_catalog"."default",
-  "direccion_empleado" varchar(255) COLLATE "pg_catalog"."default",
-  "codigo_postal_empleado" varchar(255) COLLATE "pg_catalog"."default",
-  "ciudad_empleado" varchar(255) COLLATE "pg_catalog"."default",
-  "pais_empleado" varchar(255) COLLATE "pg_catalog"."default",
-  "nombre_tienda" varchar(255) COLLATE "pg_catalog"."default",
-  "encargado_tienda" varchar(255) COLLATE "pg_catalog"."default",
-  "direccion_tienda" varchar(255) COLLATE "pg_catalog"."default",
-  "codigo_postal_tienda" varchar(255) COLLATE "pg_catalog"."default",
-  "ciudad_tienda" varchar(255) COLLATE "pg_catalog"."default",
-  "pais_tienda" varchar(255) COLLATE "pg_catalog"."default",
-  "tienda_pelicula" varchar(255) COLLATE "pg_catalog"."default",
-  "nombre_pelicula" varchar(255) COLLATE "pg_catalog"."default",
-  "descripcion_pelicula" varchar(255) COLLATE "pg_catalog"."default",
-  "ano_lanzamiento" varchar(255) COLLATE "pg_catalog"."default",
-  "dias_renta" varchar(255) COLLATE "pg_catalog"."default",
-  "costo_renta" varchar(255) COLLATE "pg_catalog"."default",
-  "duracion" varchar(255) COLLATE "pg_catalog"."default",
-  "costo_por_dano" varchar(255) COLLATE "pg_catalog"."default",
-  "clasificacion" varchar(255) COLLATE "pg_catalog"."default",
-  "lenguaje_pelicula" varchar(255) COLLATE "pg_catalog"."default",
-  "categoria_pelicula" varchar(255) COLLATE "pg_catalog"."default",
-  "actor_pelicula" varchar(255) COLLATE "pg_catalog"."default"
-)
-;
-
--- ----------------------------
--- Records of temporal
--- ----------------------------
-BEGIN;
-COMMIT;
-
--- ----------------------------
 -- Table structure for tienda
 -- ----------------------------
 DROP TABLE IF EXISTS "tienda";
 CREATE TABLE "tienda" (
-  "id_tienda" int2 NOT NULL DEFAULT nextval('id_tienda'::regclass),
+  "id_tienda" int8 NOT NULL DEFAULT nextval('id_tienda'::regclass),
   "nombre" varchar(255) COLLATE "pg_catalog"."default",
-  "id_direccion" int2 NOT NULL
+  "id_direccion" int8 NOT NULL
 )
 ;
 
@@ -517,9 +429,9 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS "tienda_pelicula";
 CREATE TABLE "tienda_pelicula" (
-  "id_tienda" int2 NOT NULL,
-  "id_pelicula" int2 NOT NULL,
-  "cantidad" int2
+  "id_tienda" int8 NOT NULL,
+  "id_pelicula" int8 NOT NULL,
+  "cantidad" int8
 )
 ;
 
@@ -534,84 +446,77 @@ COMMIT;
 -- ----------------------------
 ALTER SEQUENCE "id_actor"
 OWNED BY "actor"."id_actor";
-SELECT setval('"id_actor"', 2, false);
+SELECT setval('"id_actor"', 3, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_categoria"
 OWNED BY "categoria"."id_categoria";
-SELECT setval('"id_categoria"', 2, false);
+SELECT setval('"id_categoria"', 3, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_ciudad"
-OWNED BY "ciudad"."id_cuidad";
-SELECT setval('"id_ciudad"', 2, false);
+OWNED BY "ciudad"."id_ciudad";
+SELECT setval('"id_ciudad"', 3, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_cliente"
 OWNED BY "cliente"."id_cliente";
-SELECT setval('"id_cliente"', 2, false);
+SELECT setval('"id_cliente"', 3, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_direccion"
 OWNED BY "direccion"."id_direccion";
-SELECT setval('"id_direccion"', 2, false);
+SELECT setval('"id_direccion"', 3, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_empleado"
 OWNED BY "empleado"."id_empleado";
-SELECT setval('"id_empleado"', 2, false);
+SELECT setval('"id_empleado"', 3, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_idioma"
 OWNED BY "idioma"."id_idioma";
-SELECT setval('"id_idioma"', 2, false);
+SELECT setval('"id_idioma"', 3, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_pais"
 OWNED BY "pais"."id_pais";
-SELECT setval('"id_pais"', 2, false);
+SELECT setval('"id_pais"', 3, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_pelicula"
 OWNED BY "pelicula"."id_pelicula";
-SELECT setval('"id_pelicula"', 2, false);
+SELECT setval('"id_pelicula"', 3, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_rentado"
 OWNED BY "rentado"."id_rentado";
-SELECT setval('"id_rentado"', 2, false);
+SELECT setval('"id_rentado"', 3, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_tienda"
 OWNED BY "tienda"."id_tienda";
-SELECT setval('"id_tienda"', 2, false);
-
--- ----------------------------
--- Alter sequences owned by
--- ----------------------------
-ALTER SEQUENCE "prueba_incremento_id"
-OWNED BY "prueba_incremento"."id";
-SELECT setval('"prueba_incremento_id"', 5, true);
+SELECT setval('"id_tienda"', 3, false);
 
 -- ----------------------------
 -- Primary Key structure for table actor
@@ -626,7 +531,7 @@ ALTER TABLE "categoria" ADD CONSTRAINT "categoria_pkey" PRIMARY KEY ("id_categor
 -- ----------------------------
 -- Primary Key structure for table ciudad
 -- ----------------------------
-ALTER TABLE "ciudad" ADD CONSTRAINT "ciudad_pkey" PRIMARY KEY ("id_cuidad");
+ALTER TABLE "ciudad" ADD CONSTRAINT "ciudad_pkey" PRIMARY KEY ("id_ciudad");
 
 -- ----------------------------
 -- Primary Key structure for table cliente
@@ -659,11 +564,6 @@ ALTER TABLE "pais" ADD CONSTRAINT "pais_pkey" PRIMARY KEY ("id_pais");
 ALTER TABLE "pelicula" ADD CONSTRAINT "pelicula_pkey" PRIMARY KEY ("id_pelicula");
 
 -- ----------------------------
--- Primary Key structure for table prueba_incremento
--- ----------------------------
-ALTER TABLE "prueba_incremento" ADD CONSTRAINT "prueba_incremento_pkey" PRIMARY KEY ("id");
-
--- ----------------------------
 -- Primary Key structure for table rentado
 -- ----------------------------
 ALTER TABLE "rentado" ADD CONSTRAINT "rentado_pkey" PRIMARY KEY ("id_rentado");
@@ -692,7 +592,7 @@ ALTER TABLE "cliente_direccion" ADD CONSTRAINT "id_direccion" FOREIGN KEY ("id_d
 -- ----------------------------
 -- Foreign Keys structure for table direccion
 -- ----------------------------
-ALTER TABLE "direccion" ADD CONSTRAINT "id_ciudad" FOREIGN KEY ("id_ciudad") REFERENCES "ciudad" ("id_cuidad") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "direccion" ADD CONSTRAINT "id_ciudad" FOREIGN KEY ("id_ciudad") REFERENCES "ciudad" ("id_ciudad") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- ----------------------------
 -- Foreign Keys structure for table empleado
