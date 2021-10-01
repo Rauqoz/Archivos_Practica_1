@@ -76,6 +76,7 @@ def cargarModelo():
     cur.execute(open("./base.sql", "r").read())
     conexion.commit() # <- We MUST commit to reflect the inserted data
 
+
     #empieza carga de temporal al modelo
     cur.execute( "SELECT * FROM temporal")
     temporal = cur.fetchall()
@@ -93,25 +94,16 @@ def cargarModelo():
         llenar_direccion(direccion_cliente,ciudad_cliente)
         llenar_direccion(direccion_empleado,ciudad_empleado)
         llenar_direccion(direccion_tienda,ciudad_tienda)
-        llenar_tienda(nombre_tienda,direccion_tienda)
+        llenar_tienda(nombre_tienda,direccion_tienda,encargado_tienda)
         llenar_pelicula(nombre_pelicula,descripcion_pelicula,ano_lanzamiento,dias_renta,costo_renta,duracion,costo_por_dano,clasificacion)
         llenar_pelicula_idioma(nombre_pelicula,lenguaje_pelicula)
+        llenar_pelicula_actor(nombre_pelicula,actor_pelicula)
         llenar_pelicula_categoria(nombre_pelicula,categoria_pelicula)
-        
+        llenar_empleado(nombre_empleado,correo_empleado,empleado_activo,tienda_empleado,usuario_empleado,contrasena_empleado)
 
-        
 
     return {"step": "cargarModelo"}
 
-    #select * from direccion
-    #inner join ciudad on direccion.id_ciudad = ciudad.id_cuidad
-    #where ciudad.nombre = 'guas Lindas de Gois'
-
-    #query pro insert con inner join
-    #insert into ciudad (id_pais, codigo_postal, nombre)
-    #(SELECT id_pais,'10','nuevo' from pais where pais.nombre='Brazil')
-
-    #select * from ciudad where nombre='nuevo'
 
 def llenar_idioma(idioma):
     cur.execute(f"select * from idioma where nombre_idioma='{idioma}'")
@@ -146,26 +138,54 @@ def llenar_ciudad(ciudad,codigo_postal,pais):
             cur.execute(f"insert into ciudad (id_pais, codigo_postal,nombre) (select id_pais,'{codigo_postal}','{ciudad}' from pais where pais.nombre = '{pais}')")
         else:
             cur.execute(f"insert into ciudad (id_pais, codigo_postal,nombre) (select id_pais,'0','{ciudad}' from pais where pais.nombre = '{pais}')")
+        conexion.commit() # <- We MUST commit to reflect the inserted data
         
 def llenar_direccion(direccion,ciudad):
     cur.execute(f"select * from direccion where direccion='{direccion}'")
     if len(cur.fetchall()) == 0 and direccion != '-':
         cur.execute(f"insert into direccion (id_ciudad, direccion) (select id_ciudad,'{direccion}' from ciudad where ciudad.nombre = '{ciudad}')")
+        conexion.commit() # <- We MUST commit to reflect the inserted data
                 
-def llenar_tienda(tienda,direccion):
-    cur.execute(f"select * from tienda where nombre='{tienda}'")
-    if len(cur.fetchall()) == 0 and tienda != '-':
-        cur.execute(f"insert into tienda (nombre, id_direccion) (select '{tienda}',id_direccion from direccion where direccion.direccion = '{direccion}')")
+def llenar_tienda(tienda,direccion,encargado):
+    if encargado != '-':
+        a_encargado = encargado.split()
+        cur.execute(f"select * from tienda where nombre='{tienda}'")
+        if len(cur.fetchall()) == 0 and tienda != '-':
+            cur.execute(f"insert into tienda (nombre, id_direccion,n_encargado,a_encargado) (select '{tienda}',id_direccion,'{a_encargado[0]}','{a_encargado[1]}' from direccion where direccion.direccion = '{direccion}')")
+            conexion.commit() # <- We MUST commit to reflect the inserted data
                 
 def llenar_pelicula(nombre,descripcion,year,dias_renta,costo,duracion,costo_mal,clasificacion):
     cur.execute(f"select * from pelicula where nombre='{nombre}'")
     if len(cur.fetchall()) == 0 and nombre != '-':
         cur.execute(f"insert into pelicula (nombre,descripcion,year_lanzamiento,dias_renta,costo,duracion,costo_mal_estado,clasificacion) values ('{nombre}','{descripcion}','{year}','{dias_renta}','{costo}','{duracion}','{costo_mal}','{clasificacion}')")
+        conexion.commit() # <- We MUST commit to reflect the inserted data
    
 def llenar_pelicula_idioma(nombre,idioma):
-    if nombre != '-' and idioma != '-':
+    cur.execute(f"select * from pelicula_idioma inner join pelicula on pelicula.id_pelicula=pelicula_idioma.id_pelicula inner join idioma on idioma.id_idioma=pelicula_idioma.id_idioma where pelicula.nombre = '{nombre}' and idioma.nombre_idioma='{idioma}'")
+    if len(cur.fetchall()) == 0 and nombre != '-' and idioma != '-':
         cur.execute(f"insert into pelicula_idioma (id_pelicula,id_idioma) (select id_pelicula,id_idioma from pelicula,idioma where pelicula.nombre = '{nombre}' and idioma.nombre_idioma='{idioma}')")
+        conexion.commit() # <- We MUST commit to reflect the inserted data
+
+
+def llenar_pelicula_actor(nombre,actor_pelicula):
+    if actor_pelicula != '-' and nombre != '-':
+        a_actor = actor_pelicula.split()
+        cur.execute(f"select * from pelicula_actor inner join pelicula on pelicula.id_pelicula=pelicula_actor.id_pelicula inner join actor on actor.id_actor=pelicula_actor.id_actor where pelicula.nombre = '{nombre}' and actor.nombre='{a_actor[0]}' and actor.apellido='{a_actor[1]}'")
+        if len(cur.fetchall()) == 0:
+            cur.execute(f"insert into pelicula_actor (id_pelicula,id_actor) (select id_pelicula,id_actor from pelicula,actor where pelicula.nombre = '{nombre}' and actor.nombre='{a_actor[0]}' and actor.apellido='{a_actor[1]}')")
+            conexion.commit() # <- We MUST commit to reflect the inserted data
+
 
 def llenar_pelicula_categoria(nombre,categoria):
-    if nombre != '-' and categoria != '-':
+    cur.execute(f"select * from pelicula_categoria inner join pelicula on pelicula.id_pelicula=pelicula_categoria.id_pelicula inner join categoria on categoria.id_categoria = pelicula_categoria.id_categoria where pelicula.nombre = '{nombre}' and categoria.categoria='{categoria}'")
+    if len(cur.fetchall()) == 0 and nombre != '-' and categoria != '-':
         cur.execute(f"insert into pelicula_categoria (id_pelicula,id_categoria) (select id_pelicula,id_categoria from pelicula,categoria where pelicula.nombre = '{nombre}' and categoria.categoria='{categoria}')")
+        conexion.commit() # <- We MUST commit to reflect the inserted data
+
+def llenar_empleado(empleado,correo,status,tienda,user,password):
+    if empleado != '-':
+        a_empleado = empleado.split()
+        cur.execute(f"select * from empleado where nombre='{a_empleado[0]}' and apellido='{a_empleado[1]}'")
+        if len(cur.fetchall()) == 0 and status != '-' and tienda != '-' and user != '-' and password != '-':
+            cur.execute(f"insert into empleado (nombre,apellido,correo,status,id_tienda,usuario,password) (select '{a_empleado[0]}','{a_empleado[1]}','{correo}','{status}',id_tienda,'{user}','{password}' from tienda where tienda.nombre='{tienda}')")
+            conexion.commit() # <- We MUST commit to reflect the inserted data

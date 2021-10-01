@@ -12,7 +12,7 @@
  Target Server Version : 120008
  File Encoding         : 65001
 
- Date: 29/09/2021 21:06:18
+ Date: 01/10/2021 00:12:57
 */
 
 
@@ -253,9 +253,8 @@ CREATE TABLE "empleado" (
   "correo" varchar(255) COLLATE "pg_catalog"."default",
   "status" varchar(255) COLLATE "pg_catalog"."default",
   "id_tienda" int8 NOT NULL,
-  "user" varchar(255) COLLATE "pg_catalog"."default",
-  "pass" varchar(255) COLLATE "pg_catalog"."default",
-  "encargado" varchar(255) COLLATE "pg_catalog"."default"
+  "usuario" varchar(255) COLLATE "pg_catalog"."default",
+  "password" varchar(255) COLLATE "pg_catalog"."default"
 )
 ;
 
@@ -414,7 +413,9 @@ DROP TABLE IF EXISTS "tienda";
 CREATE TABLE "tienda" (
   "id_tienda" int8 NOT NULL DEFAULT nextval('id_tienda'::regclass),
   "nombre" varchar(255) COLLATE "pg_catalog"."default",
-  "id_direccion" int8 NOT NULL
+  "id_direccion" int8 NOT NULL,
+  "n_encargado" varchar(255) COLLATE "pg_catalog"."default",
+  "a_encargado" varchar(255) COLLATE "pg_catalog"."default"
 )
 ;
 
@@ -446,77 +447,77 @@ COMMIT;
 -- ----------------------------
 ALTER SEQUENCE "id_actor"
 OWNED BY "actor"."id_actor";
-SELECT setval('"id_actor"', 3, false);
+SELECT setval('"id_actor"', 6, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_categoria"
 OWNED BY "categoria"."id_categoria";
-SELECT setval('"id_categoria"', 3, false);
+SELECT setval('"id_categoria"', 6, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_ciudad"
 OWNED BY "ciudad"."id_ciudad";
-SELECT setval('"id_ciudad"', 3, false);
+SELECT setval('"id_ciudad"', 6, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_cliente"
 OWNED BY "cliente"."id_cliente";
-SELECT setval('"id_cliente"', 3, false);
+SELECT setval('"id_cliente"', 6, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_direccion"
 OWNED BY "direccion"."id_direccion";
-SELECT setval('"id_direccion"', 3, false);
+SELECT setval('"id_direccion"', 6, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_empleado"
 OWNED BY "empleado"."id_empleado";
-SELECT setval('"id_empleado"', 3, false);
+SELECT setval('"id_empleado"', 6, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_idioma"
 OWNED BY "idioma"."id_idioma";
-SELECT setval('"id_idioma"', 3, false);
+SELECT setval('"id_idioma"', 6, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_pais"
 OWNED BY "pais"."id_pais";
-SELECT setval('"id_pais"', 3, false);
+SELECT setval('"id_pais"', 6, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_pelicula"
 OWNED BY "pelicula"."id_pelicula";
-SELECT setval('"id_pelicula"', 3, false);
+SELECT setval('"id_pelicula"', 6, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_rentado"
 OWNED BY "rentado"."id_rentado";
-SELECT setval('"id_rentado"', 3, false);
+SELECT setval('"id_rentado"', 6, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "id_tienda"
 OWNED BY "tienda"."id_tienda";
-SELECT setval('"id_tienda"', 3, false);
+SELECT setval('"id_tienda"', 6, false);
 
 -- ----------------------------
 -- Primary Key structure for table actor
