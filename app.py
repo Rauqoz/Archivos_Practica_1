@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask,request,render_template
+from flask.helpers import make_response
 import psycopg2
 import json
 
@@ -11,33 +12,9 @@ cur = conexion.cursor()
 @app.route("/")
 def hello_world():
     print("inicio conexion")
-
-    cur.execute( "select * from prueba_incremento where nombre='rau'")
-
-    arreglo = cur.fetchall()
-    #for id,nombre,edad in arreglo:
-    #    print(id,nombre,edad)
-    print(arreglo[0])
-    print(arreglo[0][0])
-        
-    cur.execute( "select * from prueba_incremento where nombre='adriana'")
-
-    arreglo2 = cur.fetchall()
-    
-
-    x = 'hola'
-    print(f"nel o {x}")
-
-    return {"step": "Home"}
-
-@app.route("/insertar")
-def insertar():
-    print("inicio conexion")
-    
-    cur.execute("INSERT INTO prueba_incremento (nombre,edad) VALUES('adriana',40)")
-    conexion.commit() # <- We MUST commit to reflect the inserted data
-
-    return {"step": "insertar"}
+    resp = make_response(render_template(...))
+    resp.set_cookie('somecookiename', 'I am cookie')
+    return {"step": "home"}
 
 @app.route("/eliminarTemporal")
 def eliminarTemporal():
@@ -66,6 +43,8 @@ def eliminarModelo():
 
     cur.execute(open("./eliminar_base.sql", "r").read())
     conexion.commit() # <- We MUST commit to reflect the inserted data
+    #cur.execute(open("./base.sql", "r").read())
+    #conexion.commit() # <- We MUST commit to reflect the inserted data
 
     return {"step": "eliminarModelo"}
 
@@ -100,6 +79,17 @@ def cargarModelo():
         llenar_pelicula_actor(nombre_pelicula,actor_pelicula)
         llenar_pelicula_categoria(nombre_pelicula,categoria_pelicula)
         llenar_empleado(nombre_empleado,correo_empleado,empleado_activo,tienda_empleado,usuario_empleado,contrasena_empleado)
+        llenar_cliente(nombre_cliente,correo_cliente,cliente_activo,fecha_creacion,tienda_preferida)
+        llenar_empleado_direccion(nombre_empleado,direccion_empleado)
+        llenar_cliente_direccion(nombre_cliente,direccion_cliente)
+        llenar_tienda_pelicula(tienda_pelicula,nombre_pelicula,fecha_renta)
+
+    cur.execute( "SELECT * FROM temporal")
+    temporal = cur.fetchall()
+
+    for nombre_cliente, correo_cliente, cliente_activo, fecha_creacion, tienda_preferida, direccion_cliente, codigo_postal_cliente, ciudad_cliente, pais_cliente, fecha_renta, fecha_retorno, monto_a_pagar, fecha_pago, nombre_empleado, correo_empleado, empleado_activo, tienda_empleado, usuario_empleado, contrasena_empleado, direccion_empleado, codigo_postal_empleado, ciudad_empleado, pais_empleado, nombre_tienda, encargado_tienda, direccion_tienda, codigo_postal_tienda, ciudad_tienda, pais_tienda, tienda_pelicula, nombre_pelicula, descripcion_pelicula, ano_lanzamiento, dias_renta, costo_renta, duracion, costo_por_dano, clasificacion, lenguaje_pelicula, categoria_pelicula, actor_pelicula  in temporal :
+        llenar_rentado(fecha_renta,fecha_retorno,monto_a_pagar,fecha_pago,nombre_cliente,tienda_pelicula,nombre_empleado,nombre_pelicula)
+
 
 
     return {"step": "cargarModelo"}
@@ -189,3 +179,49 @@ def llenar_empleado(empleado,correo,status,tienda,user,password):
         if len(cur.fetchall()) == 0 and status != '-' and tienda != '-' and user != '-' and password != '-':
             cur.execute(f"insert into empleado (nombre,apellido,correo,status,id_tienda,usuario,password) (select '{a_empleado[0]}','{a_empleado[1]}','{correo}','{status}',id_tienda,'{user}','{password}' from tienda where tienda.nombre='{tienda}')")
             conexion.commit() # <- We MUST commit to reflect the inserted data
+
+def llenar_cliente(cliente,correo,status,fecha,tienda):
+    if cliente != '-':
+        a_cliente = cliente.split()
+        cur.execute(f"select * from cliente where nombre='{a_cliente[0]}' and apellido='{a_cliente[1]}'")
+        if len(cur.fetchall()) == 0 and status != '-' and fecha != '-' and tienda != '-':
+            cur.execute(f"insert into cliente (nombre,apellido,correo,status,fecha_registro,id_tienda) (select '{a_cliente[0]}','{a_cliente[1]}','{correo}','{status}','{fecha}',id_tienda from tienda where tienda.nombre='{tienda}')")
+            conexion.commit() # <- We MUST commit to reflect the inserted data
+
+
+def llenar_empleado_direccion(empleado,direccion):
+    if empleado != '-' and direccion != '-':
+        a_empleado = empleado.split()
+        cur.execute(f"select * from empleado_direccion inner join empleado on empleado.id_empleado=empleado_direccion.id_empleado inner join direccion on direccion.id_direccion=empleado_direccion.id_direccion where empleado.nombre = '{a_empleado[0]}' and empleado.apellido='{a_empleado[1]}' and direccion.direccion='{direccion}'")
+        if len(cur.fetchall()) == 0:
+            cur.execute(f"insert into empleado_direccion (id_empleado,id_direccion) (select id_empleado,id_direccion from empleado,direccion where empleado.nombre = '{a_empleado[0]}' and empleado.apellido='{a_empleado[1]}' and direccion.direccion='{direccion}')")
+            conexion.commit() # <- We MUST commit to reflect the inserted data
+
+def llenar_cliente_direccion(cliente,direccion):
+    if cliente != '-' and direccion != '-':
+        a_cliente = cliente.split()
+        cur.execute(f"select * from cliente_direccion inner join cliente on cliente.id_cliente=cliente_direccion.id_cliente inner join direccion on direccion.id_direccion=cliente_direccion.id_direccion where cliente.nombre = '{a_cliente[0]}' and cliente.apellido='{a_cliente[1]}' and direccion.direccion='{direccion}'")
+        if len(cur.fetchall()) == 0:
+            cur.execute(f"insert into cliente_direccion (id_cliente,id_direccion) (select id_cliente,id_direccion from cliente,direccion where cliente.nombre = '{a_cliente[0]}' and cliente.apellido='{a_cliente[1]}' and direccion.direccion='{direccion}')")
+            conexion.commit() # <- We MUST commit to reflect the inserted data
+
+def llenar_rentado(fecha_renta,fecha_regreso,total,fecha_pago,cliente,tienda,empleado,pelicula):
+    if fecha_renta != '-' and fecha_regreso != '-' and total != '-' and fecha_pago != '-' and cliente != '-' and tienda != '-' and empleado != '-' and pelicula != '-':
+        a_cliente = cliente.split()
+        a_empleado = empleado.split()
+        cur.execute(f"select * from rentado inner join cliente on rentado.id_cliente=cliente.id_cliente inner join tienda on rentado.id_tienda=tienda.id_tienda inner join empleado on rentado.id_empleado=empleado.id_empleado inner join pelicula on pelicula.id_pelicula=rentado.id_pelicula where rentado.fecha_renta='{fecha_renta}' and rentado.fecha_regreso='{fecha_regreso}' and rentado.total='{total}' and rentado.fecha_pago='{fecha_pago}' and cliente.nombre='{a_cliente[0]}' and cliente.apellido='{a_cliente[1]}' and tienda.nombre='{tienda}' and empleado.nombre='{a_empleado[0]}' and empleado.apellido='{a_empleado[1]}' and pelicula.nombre='{pelicula}'")
+        if len(cur.fetchall()) == 0:
+            #select * from rentado inner join cliente on rentado.id_cliente=cliente.id_cliente inner join tienda on rentado.id_tienda=tienda.id_tienda inner join empleado on rentado.id_empleado=empleado.id_empleado inner join pelicula on pelicula.id_pelicula=rentado.id_pelicula where rentado.fecha_renta='24/05/2005 22:53' and rentado.fecha_regreso='26/05/2005 22:04' and rentado.total='2.99' and rentado.fecha_pago='24/05/2005 22:53' and cliente.nombre='Charlotte' and cliente.apellido='Hunter' and tienda.nombre='Tienda 1' and empleado.nombre='Mike' and empleado.apellido='Hillyer' and pelicula.nombre='BLANKET BEVERLY'
+            cur.execute(f"select id_cliente,tienda.id_tienda,id_empleado,id_pelicula from cliente,tienda,empleado,pelicula where cliente.nombre='{a_cliente[0]}' and cliente.apellido='{a_cliente[1]}' and tienda.nombre='{tienda}' and empleado.nombre='{a_empleado[0]}' and empleado.apellido='{a_empleado[1]}' and pelicula.nombre='{pelicula}'")
+            datos = cur.fetchall()
+            cur.execute(f"insert into rentado (fecha_renta,fecha_regreso,total,fecha_pago,id_cliente,id_tienda,id_empleado,id_pelicula) values ('{fecha_renta}','{fecha_regreso}','{total}','{fecha_pago}','{datos[0][0]}','{datos[0][1]}','{datos[0][2]}','{datos[0][3]}')")
+            conexion.commit() # <- We MUST commit to reflect the inserted data
+
+def llenar_tienda_pelicula(tienda,pelicula,fecha):
+    if tienda != '-' and pelicula != '-' and fecha != '-':
+        cur.execute(f"select * from tienda_pelicula inner join tienda on tienda.id_tienda=tienda_pelicula.id_tienda inner join pelicula on  pelicula.id_pelicula=tienda_pelicula.id_pelicula where tienda.nombre='{tienda}' and pelicula.nombre='{pelicula}' and tienda_pelicula.fecha='{fecha}'")
+        if len(cur.fetchall()) == 0:
+            #no esta el dato, se necesita insertar nuevo
+            cur.execute(f"insert into tienda_pelicula (id_tienda,id_pelicula,'{fecha}') (select id_tienda,id_pelicula from tienda,pelicula where tienda.nombre='{tienda}' and pelicula.nombre='{pelicula}') ")
+            conexion.commit() # <- We MUST commit to reflect the inserted data
+
