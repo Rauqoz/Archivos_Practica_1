@@ -12,8 +12,6 @@ cur = conexion.cursor()
 @app.route("/")
 def hello_world():
     print("inicio conexion")
-    resp = make_response(render_template(...))
-    resp.set_cookie('somecookiename', 'I am cookie')
     return {"step": "home"}
 
 @app.route("/eliminarTemporal")
@@ -222,6 +220,15 @@ def llenar_tienda_pelicula(tienda,pelicula,fecha):
         cur.execute(f"select * from tienda_pelicula inner join tienda on tienda.id_tienda=tienda_pelicula.id_tienda inner join pelicula on  pelicula.id_pelicula=tienda_pelicula.id_pelicula where tienda.nombre='{tienda}' and pelicula.nombre='{pelicula}' and tienda_pelicula.fecha='{fecha}'")
         if len(cur.fetchall()) == 0:
             #no esta el dato, se necesita insertar nuevo
-            cur.execute(f"insert into tienda_pelicula (id_tienda,id_pelicula,'{fecha}') (select id_tienda,id_pelicula from tienda,pelicula where tienda.nombre='{tienda}' and pelicula.nombre='{pelicula}') ")
+            cur.execute(f"insert into tienda_pelicula (id_tienda,id_pelicula,fecha) (select id_tienda,id_pelicula,'{fecha}' from tienda,pelicula where tienda.nombre='{tienda}' and pelicula.nombre='{pelicula}') ")
             conexion.commit() # <- We MUST commit to reflect the inserted data
 
+@app.route("/consulta1")
+def consulta1():
+    cur.execute(f"select count(*) from tienda_pelicula inner join pelicula on pelicula.id_pelicula=tienda_pelicula.id_pelicula where nombre='SUGAR WONKA'")
+    return {"consulta1": cur.fetchall()[0][0]}
+
+@app.route("/consulta2")
+def consulta2():
+    cur.execute(f"select count(*) from tienda_pelicula inner join pelicula on pelicula.id_pelicula=tienda_pelicula.id_pelicula where nombre='SUGAR WONKA'")
+    return {"consulta1": cur.fetchall()[0][0]}
