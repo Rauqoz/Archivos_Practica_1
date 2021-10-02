@@ -226,9 +226,22 @@ def llenar_tienda_pelicula(tienda,pelicula,fecha):
 @app.route("/consulta1")
 def consulta1():
     cur.execute(f"select count(*) from tienda_pelicula inner join pelicula on pelicula.id_pelicula=tienda_pelicula.id_pelicula where nombre='SUGAR WONKA'")
-    return {"consulta1": cur.fetchall()[0][0]}
+    return {"cantidad":cur.fetchall()[0][0]}
 
 @app.route("/consulta2")
 def consulta2():
-    cur.execute(f"select count(*) from tienda_pelicula inner join pelicula on pelicula.id_pelicula=tienda_pelicula.id_pelicula where nombre='SUGAR WONKA'")
-    return {"consulta1": cur.fetchall()[0][0]}
+    cur.execute(f"select count(*) as rentas,concat(nombre,' ',apellido)nombre_apellido,sum(total) from rentado inner join cliente on cliente.id_cliente=rentado.id_cliente group by nombre_apellido having count(*)>=40")
+    datos = cur.fetchall()
+    return {"datos":datos}
+
+@app.route("/consulta3")
+def consulta3():
+    cur.execute(f"select concat(nombre,' ',apellido)nombre_completo from actor WHERE apellido ilike '%SON%' order by nombre")
+    datos = cur.fetchall()
+    return {"datos":datos}
+
+@app.route("/consulta4")
+def consulta4():
+    cur.execute(f"select actor.nombre, apellido from actor inner join pelicula_actor on pelicula_actor.id_actor=actor.id_actor inner join pelicula on pelicula_actor.id_pelicula=pelicula.id_pelicula where pelicula.descripcion ilike '%crocodile%' and pelicula.descripcion ilike '%shark%'")
+    datos = cur.fetchall()
+    return {"datos":datos}
