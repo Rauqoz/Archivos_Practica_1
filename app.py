@@ -230,7 +230,7 @@ def consulta1():
 
 @app.route("/consulta2")
 def consulta2():
-    cur.execute(f"select count(*) as rentas,concat(nombre,' ',apellido)nombre_apellido,sum(total) from rentado inner join cliente on cliente.id_cliente=rentado.id_cliente group by nombre_apellido having count(*)>=40")
+    cur.execute(f"select count(*) as rentas,concat(cliente.nombre,' ',cliente.apellido)nombre_apellido,sum(total) from rentado inner join cliente on cliente.id_cliente=rentado.id_cliente group by nombre_apellido having count(*)>=40 order by count(*) asc")
     datos = cur.fetchall()
     return {"datos":datos}
 
@@ -243,5 +243,17 @@ def consulta3():
 @app.route("/consulta4")
 def consulta4():
     cur.execute(f"select actor.nombre, apellido from actor inner join pelicula_actor on pelicula_actor.id_actor=actor.id_actor inner join pelicula on pelicula_actor.id_pelicula=pelicula.id_pelicula where pelicula.descripcion ilike '%crocodile%' and pelicula.descripcion ilike '%shark%'")
+    datos = cur.fetchall()
+    return {"datos":datos}
+
+@app.route("/consulta5")
+def consulta5():
+    cur.execute(f"select count(*) as rentas,pais.nombre as pais,concat(cliente.nombre,' ',cliente.apellido) as nombre_cliente,(count(cp.id_pais)/count(*))*100 as porcentaje from rentado inner join cliente on cliente.id_cliente=rentado.id_cliente inner join cliente_direccion on cliente_direccion.id_cliente=cliente.id_cliente inner join direccion on direccion.id_direccion=cliente_direccion.id_direccion inner join ciudad on ciudad.id_ciudad=direccion.id_ciudad inner join pais on pais.id_pais=ciudad.id_pais inner join (select count(pais.nombre),id_pais from pais group by id_pais) as cp on cp.id_pais=pais.id_pais group by pais.nombre,nombre_cliente,cp.id_pais ORDER BY rentas DESC limit 1 ")
+    datos = cur.fetchall()
+    return {"datos":datos}
+
+@app.route("/consulta6")
+def consulta6():
+    cur.execute(f"select pais.nombre,ciudad.nombre,count(cliente.id_cliente) as cliente_por_ciudad, (count(cliente.id_cliente)/float8((select count(cliente.id_cliente) from cliente inner join cliente_direccion on cliente_direccion.id_cliente=cliente.id_cliente inner join direccion on direccion.id_direccion=cliente_direccion.id_direccion inner join ciudad on ciudad.id_ciudad=direccion.id_ciudad inner join pais as pa on pa.id_pais=ciudad.id_pais where pa.id_pais=pais.id_pais group by pa.id_pais,pais.id_pais))) as porcentaje_pais from ciudad join direccion on direccion.id_ciudad=ciudad.id_ciudad join pais on pais.id_pais=ciudad.id_pais join cliente_direccion on cliente_direccion.id_direccion=direccion.id_direccion join cliente on cliente.id_cliente=cliente_direccion.id_cliente group by pais.nombre,ciudad.nombre,pais.id_pais order by pais.nombre")
     datos = cur.fetchall()
     return {"datos":datos}
