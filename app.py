@@ -276,3 +276,8 @@ def consulta9():
     datos = cur.fetchall()
     return {"datos":datos}
 
+@app.route("/consulta10")
+def consulta10():
+    cur.execute(f"select pais.nombre as pais,ciudad.nombre as ciudad,(select count(rentado.id_rentado) from rentado inner join cliente on cliente.id_cliente=rentado.id_cliente inner join cliente_direccion on cliente_direccion.id_cliente=cliente.id_cliente inner join direccion on direccion.id_direccion=cliente_direccion.id_direccion inner join ciudad as ci on ci.id_ciudad=direccion.id_ciudad inner join pais on pais.id_pais=ciudad.id_pais inner join pelicula on pelicula.id_pelicula=rentado.id_pelicula inner join pelicula_categoria on pelicula_categoria.id_pelicula=pelicula.id_pelicula inner join categoria on categoria.id_categoria=pelicula_categoria.id_categoria where ci.id_ciudad=ciudad.id_ciudad  group by ci.id_ciudad,ciudad.id_ciudad order by count(rentado.id_rentado) asc limit 1) as cantidad from rentado inner join cliente on cliente.id_cliente=rentado.id_cliente inner join cliente_direccion on cliente_direccion.id_cliente=cliente.id_cliente inner join direccion on direccion.id_direccion=cliente_direccion.id_direccion inner join ciudad on ciudad.id_ciudad=direccion.id_ciudad inner join pais on pais.id_pais=ciudad.id_pais inner join pelicula on pelicula.id_pelicula=rentado.id_pelicula inner join pelicula_categoria on pelicula_categoria.id_pelicula=pelicula.id_pelicula inner join categoria on categoria.id_categoria=pelicula_categoria.id_categoria where categoria.categoria='Horror' group by pais.nombre,ciudad.nombre,ciudad.id_ciudad,cantidad order by pais.nombre asc")
+    datos = cur.fetchall()
+    return {"datos":datos}
