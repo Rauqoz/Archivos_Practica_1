@@ -14,7 +14,7 @@
 
  Date: 01/10/2021 23:57:07
 */
-
+CREATE DATABASE IF NOT EXISTS blockbuster;
 -- ----------------------------
 -- Sequence structure for id_actor
 -- ----------------------------
